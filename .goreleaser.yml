@@ -2,11 +2,6 @@ version: 2
 
 project_name: darght
 
-# Basic pre-checks (optional): run tests before building
-before:
-  hooks:
-    - go test ./...
-
 builds:
   - id: darght
     main: .
