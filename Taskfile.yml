@@ -34,24 +34,21 @@ tasks:
     desc: Run unit tests
     cmds:
       - |
-        GO_BIN=${GO:-go}
-        $GO_BIN test ./...
+        {{.GO}} test ./...
     silent: false
 
   fmt:
     desc: Run go fmt on the project
     cmds:
       - |
-        GO_BIN=${GO:-go}
-        $GO_BIN fmt ./...
+        {{.GO}} fmt ./...
     silent: false
 
   vet:
     desc: Run go vet on the project
     cmds:
       - |
-        GO_BIN=${GO:-go}
-        $GO_BIN vet ./...
+        {{.GO}} vet ./...
     silent: false
 
   lint:
