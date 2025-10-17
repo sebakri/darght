@@ -6,6 +6,15 @@ import (
 	"os"
 )
 
+var (
+	// These variables are populated at build time via -ldflags.
+	// Example:
+	//   -ldflags "-X main.version=v0.1.0 -X main.commit=abcd123 -X main.date=2025-10-17"
+	version = "dev"
+	commit  = "none"
+	date    = ""
+)
+
 type Theme string
 
 const (
@@ -48,6 +57,9 @@ func main() {
 		theme := detectTheme(ctx)
 		fmt.Println(theme.String())
 		return
+	case "version":
+		printVersion()
+		return
 	case "-h", "--help", "help":
 		fallthrough
 	default:
@@ -57,6 +69,14 @@ func main() {
 	}
 }
 
+func printVersion() {
+	fmt.Printf("darght %s\n", version)
+	fmt.Printf("commit: %s\n", commit)
+	if date != "" {
+		fmt.Printf("built:  %s\n", date)
+	}
+}
+
 func usage() {
-	fmt.Println("Usage:\n\ndarght current\tPrint current theme (dark/light/unknown)")
+	fmt.Println("Usage:\n\ndarght current\tPrint current theme (dark/light/unknown)\ndarght version\tPrint build version information")
 }

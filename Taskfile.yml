@@ -1,0 +1,103 @@
+version: "3"
+env:
+  ENV: local
+
+dotenv:
+  - ".{{.ENV}}.env"
+
+vars:
+  BINARY: darght
+  GO: go
+  GORELEASER: '{{.GORELEASER | default "goreleaser"}}'
+  GOLANGCI_LINT: '{{.GOLANGCI_LINT | default "golangci-lint"}}'
+
+tasks:
+  default:
+    desc: Build the local binary (default)
+    cmds:
+      - task: build
+
+  build:
+    desc: Build for the current platform and embed version info
+    cmds:
+      - "{{.GORELEASER}} release --snapshot --clean"
+    env:
+      CGO_ENABLED: "0"
+    silent: false
+
+  build-local:
+    desc: Alias for build (explicit)
+    cmds:
+      - task: build
+
+  test:
+    desc: Run unit tests
+    cmds:
+      - |
+        GO_BIN=${GO:-go}
+        $GO_BIN test ./...
+    silent: false
+
+  fmt:
+    desc: Run go fmt on the project
+    cmds:
+      - |
+        GO_BIN=${GO:-go}
+        $GO_BIN fmt ./...
+    silent: false
+
+  vet:
+    desc: Run go vet on the project
+    cmds:
+      - |
+        GO_BIN=${GO:-go}
+        $GO_BIN vet ./...
+    silent: false
+
+  lint:
+    desc: Run golangci-lint if installed, otherwise print a hint
+    cmds:
+      - |
+        {{.GOLANGCI_LINT}} run ./...
+    silent: false
+
+  goreleaser-snapshot:
+    desc: Run goreleaser in snapshot mode (no GitHub release)
+    cmds:
+      - |
+        {{.GORELEASER}} release --snapshot --rm-dist
+    silent: false
+
+  release:
+    desc: Create a GitHub release via goreleaser (requires GITHUB_TOKEN)
+    cmds:
+      - |
+        {{.GORELEASER}} release --rm-dist
+    silent: false
+    env:
+      GITHUB_TOKEN: '{{environ "GITHUB_TOKEN"}}'
+
+  version:
+    desc: Print resolved version, commit and build date
+    cmds:
+      - |
+        VERSION=$(git describe --tags --always --dirty 2>/dev/null || echo dev)
+        COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo unknown)
+        DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "")
+        echo "version: $VERSION"
+        echo "commit:  $COMMIT"
+        echo "date:    $DATE"
+    silent: false
+
+  clean:
+    desc: Remove build artifacts
+    cmds:
+      - rm -rf bin dist
+      - echo "cleaned"
+    silent: false
+
+  help:
+    desc: Show tasks
+    cmds:
+      - task --list
+    silent: false

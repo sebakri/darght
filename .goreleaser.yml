@@ -1,0 +1,48 @@
+version: 2
+
+project_name: darght
+
+# Basic pre-checks (optional): run tests before building
+before:
+  hooks:
+    - go test ./...
+
+builds:
+  - id: darght
+    main: .
+    binary: darght
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    # Inject build-time metadata into the binary
+    ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+
+archives:
+  - id: default
+    files:
+      - LICENSE
+      - README.md
+    wrap_in_directory: true
+
+checksum:
+  name_template: "checksums.txt"
+
+release:
+  github: {}
+
+changelog:
+  use: git
+  sort: asc
+
+snapshot: {}
+
+# No Docker or signing configured by default
+dockers: []
+signs: []
+
+# Keep brew/formula and other extensible sections empty for now
+brews: []
