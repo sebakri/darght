@@ -45,7 +45,7 @@ signs: []
 homebrew_casks:
   - name: darght
     homepage: "https://github.com/sebakri/darght"
-    description: "Minimal Dark/Light theme CLI"
+    description: "Theme detection CLI"
     repository:
       owner: "sebakri"
       name: "homebrew-tools"
