@@ -69,10 +69,10 @@ tasks:
     desc: Create a GitHub release via goreleaser (requires GITHUB_TOKEN)
     cmds:
       - |
-        {{.GORELEASER}} release --rm-dist
+        {{.GORELEASER}} release --clean
     silent: false
     env:
-      GITHUB_TOKEN: '{{environ "GITHUB_TOKEN"}}'
+      GITHUB_TOKEN: "{{.GITHUB_TOKEN}}"
 
   version:
     desc: Print resolved version, commit and build date
