@@ -41,14 +41,23 @@ dockers: []
 signs: []
 
 # Keep brew/formula and other extensible sections empty for now
-brews:
+# Homebrew cask publishing (tap: sebakri/homebrew-tools)
+homebrew_casks:
   - name: darght
     homepage: "https://github.com/sebakri/darght"
     description: "Minimal Dark/Light theme CLI"
-    tap:
+    repository:
       owner: "sebakri"
       name: "homebrew-tools"
-    folder: "Formula"
+    directory: "Casks"
+    url:
+      verified: "github.com/sebakri/darght"
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/darght"]
+          end
     commit_author:
       name: "GitHub Actions"
       email: "actions@github.com"
