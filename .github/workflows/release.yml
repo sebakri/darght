@@ -45,8 +45,13 @@ jobs:
         run: go test ./...
 
       - name: Run goreleaser
+        # NOTE: If you publish Homebrew Casks, GoReleaser may need a dedicated token with
+        # write access to the tap repository. Add a repository secret named `HOMEBREW_TOKEN`
+        # (a fine-grained PAT or classic token with appropriate repo permissions) and the workflow
+        # will expose it to the goreleaser step below.
         uses: goreleaser/goreleaser-action@v4
         with:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
