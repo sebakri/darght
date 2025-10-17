@@ -44,11 +44,25 @@ jobs:
           GOOS: "windows"
         run: go test ./...
 
+      - name: Verify HOMEBREW_TOKEN permissions (debug)
+        if: always()
+        run: |
+          if [ -z "${HOMEBREW_TOKEN:-}" ]; then
+            echo "HOMEBREW_TOKEN is not set (secret not provided)"
+            exit 1
+          fi
+          echo "Querying target tap repo permissions..."
+          # Prefer jq if available; otherwise print a truncated raw response
+          if command -v jq >/dev/null 2>&1; then
+            curl -s -H "Authorization: token $HOMEBREW_TOKEN" https://api.github.com/repos/sebakri/homebrew-tools | jq '.permissions'
+          else
+            echo "jq not found; printing raw response (truncated)"
+            curl -s -H "Authorization: token $HOMEBREW_TOKEN" https://api.github.com/repos/sebakri/homebrew-tools | sed -n '1,160p'
+          fi
+        env:
+          HOMEBREW_TOKEN: ${{ secrets.HOMEBREW_TOKEN }}
+
       - name: Run goreleaser
-        # NOTE: If you publish Homebrew Casks, GoReleaser may need a dedicated token with
-        # write access to the tap repository. Add a repository secret named `HOMEBREW_TOKEN`
-        # (a fine-grained PAT or classic token with appropriate repo permissions) and the workflow
-        # will expose it to the goreleaser step below.
         uses: goreleaser/goreleaser-action@v4
         with:
           args: release --clean
