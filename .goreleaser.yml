@@ -49,6 +49,7 @@ homebrew_casks:
     repository:
       owner: "sebakri"
       name: "homebrew-tools"
+      token: "{{ .Env.HOMEBREW_TOKEN }}"
     directory: "Casks"
     url:
       verified: "github.com/sebakri/darght"
